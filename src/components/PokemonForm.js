@@ -13,16 +13,49 @@ class PokemonForm extends React.Component {
     }
   }
 
+  handleSubmit = () => {
+    const data = {
+      name: this.state.name,
+      stats: [
+        {
+          value: this.state.hp,
+          name: 'hp'
+        }
+      ],
+      sprites: {
+        front: this.state.frontUrl,
+        back: this.state.backUrl
+      }
+    }
+
+    fetch('http://localhost:3000/pokemon', {
+      method: 'POST',
+      body: JSON.stringify(data),
+      headers: {"Content-Type": "application/json"}
+    })
+    .then(this.props.addPokemon(data))
+    .then(this.setState({
+      name: '',
+      hp: '',
+      frontUrl: '',
+      backUrl: ''
+    }))
+  }
+
+  handleChange = (event, data) => {
+    this.setState({[data.name]: data.value})
+  }
+
   render() {
     return (
       <div>
         <h3>Add a Pokemon!</h3>
         <Form onSubmit={this.handleSubmit}>
           <Form.Group widths="equal">
-            <Form.Input fluid label="Name" placeholder="Name" name="name" />
-            <Form.Input fluid label="hp" placeholder="hp" name="hp" />
-            <Form.Input fluid label="Front Image URL" placeholder="url" name="frontUrl" />
-            <Form.Input fluid label="Back Image URL" placeholder="url" name="backUrl" />
+            <Form.Input fluid label="Name" placeholder="Name" name="name" value={this.state.name} onChange={this.handleChange}/>
+            <Form.Input fluid label="hp" placeholder="hp" name="hp" value={this.state.hp} onChange={this.handleChange}/>
+            <Form.Input fluid label="Front Image URL" placeholder="url" value={this.state.frontUrl} name="frontUrl" onChange={this.handleChange}/>
+            <Form.Input fluid label="Back Image URL" placeholder="url" name="backUrl" value={this.state.backUrl} onChange={this.handleChange}/>
           </Form.Group>
           <Form.Button>Submit</Form.Button>
         </Form>
